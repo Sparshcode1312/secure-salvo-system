@@ -44,6 +44,45 @@ Backend: business logic lives in database functions wrapped in transactions, cal
 Database: Postgres, chosen specifically for this project over a NoSQL store because the core requirement — atomic, constraint-enforced financial transactions — is exactly what relational databases with ACID guarantees are built for.
 ---
 4. Database Schema
+   ```mermaid
+erDiagram
+  USERS ||--o{ SALES : has
+  USERS ||--o{ PAYOUTS : has
+  USERS ||--o{ WITHDRAWALS : has
+  SALES ||--o{ PAYOUTS : generates
+  WITHDRAWALS ||--o| PAYOUTS : creates
+  PAYOUTS ||--o| PAYOUTS : reverses
+
+  USERS {
+    uuid id PK
+    string name
+    string email
+    timestamp created_at
+  }
+  SALES {
+    uuid id PK
+    uuid user_id FK
+    string brand
+    numeric earning
+    enum status
+    timestamp reconciled_at
+  }
+  PAYOUTS {
+    uuid id PK
+    uuid user_id FK
+    uuid sale_id FK
+    enum type
+    numeric amount
+    enum status
+    uuid ref_payout_id FK
+  }
+  WITHDRAWALS {
+    uuid id PK
+    uuid user_id FK
+    numeric amount
+    enum status
+  }
+```
 `users`
 Column	Type	Notes
 id	uuid, PK	
