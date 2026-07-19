@@ -184,6 +184,7 @@ export type Database = {
           withdrawal_id: string
         }[]
       }
+      reset_demo_data: { Args: never; Returns: undefined }
       run_advance_payout_job: {
         Args: never
         Returns: {

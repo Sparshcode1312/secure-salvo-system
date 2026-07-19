@@ -213,3 +213,12 @@ export const failWithdrawal = createServerFn({ method: "POST" })
     }
     return { ok: true, data: { reversalId: reversalId as string } };
   });
+
+export const resetDemoData = createServerFn({ method: "POST" }).handler(
+  async (): Promise<ApiResult<{ ok: true }>> => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.rpc("reset_demo_data" as never);
+    if (error) return { ok: false, status: 400, error: error.message };
+    return { ok: true, data: { ok: true } };
+  },
+);
