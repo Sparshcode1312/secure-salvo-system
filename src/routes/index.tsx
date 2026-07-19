@@ -204,12 +204,26 @@ function SystemDesignNotes() {
 function AdminPanel({ userId, onDone }: { userId: string; onDone: () => void }) {
   const runJob = useServerFn(runAdvanceJob);
   const reconcile = useServerFn(reconcileSale);
+  const resetFn = useServerFn(resetDemoData);
 
   const jobMut = useMutation({
     mutationFn: () => runJob(),
     onSuccess: (r) => {
       if (r.processed === 0) toast.info("No eligible sales — nothing to advance.");
       else toast.success(`Advance job: processed ${r.processed} sale(s), paid ${inr(r.totalAdvance)}.`);
+      onDone();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const resetMut = useMutation({
+    mutationFn: () => resetFn(),
+    onSuccess: (res) => {
+      if (!res.ok) {
+        toast.error(res.error);
+        return;
+      }
+      toast.success("Demo data reset");
       onDone();
     },
     onError: (e: Error) => toast.error(e.message),
@@ -244,13 +258,42 @@ function AdminPanel({ userId, onDone }: { userId: string; onDone: () => void }) 
     <section className="rounded border border-slate-200 bg-white">
       <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
         <h2 className="text-sm font-semibold">Admin</h2>
-        <button
-          onClick={() => jobMut.mutate()}
-          disabled={jobMut.isPending}
-          className="rounded bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700 disabled:opacity-50"
-        >
-          {jobMut.isPending ? "Running…" : "Run Advance Payout Job"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => jobMut.mutate()}
+            disabled={jobMut.isPending}
+            className="rounded bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+          >
+            {jobMut.isPending ? "Running…" : "Run Advance Payout Job"}
+          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button
+                disabled={resetMut.isPending}
+                className="rounded border border-rose-300 bg-white px-3 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-50 disabled:opacity-50"
+              >
+                {resetMut.isPending ? "Resetting…" : "Reset Demo Data"}
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reset demo data?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will reset all demo data to its initial state. Continue?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => resetMut.mutate()}
+                  className="bg-rose-600 text-white hover:bg-rose-700"
+                >
+                  Reset
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
       <div className="px-4 py-3">
         <AdminPendingTable userId={userId} onReconcile={(saleId, status) => reconcileMut.mutate({ saleId, status })} />
