@@ -85,14 +85,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Internal admin tool for affiliate sale payouts: advance payouts, reconciliation, withdrawals, append-only ledger.",
       },
       { name: "author", content: "Payout Ledger" },
-      { property: "og:title", content: "Payout Ledger" },
+      { property: "og:title", content: "Payout Ledger — Affiliate Payout Management" },
       {
         property: "og:description",
-        content: "Affiliate payout management with append-only ledger and idempotent jobs.",
+        content: "Internal admin tool for affiliate sale payouts: advance payouts, reconciliation, withdrawals, append-only ledger.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Payout Ledger — Affiliate Payout Management" },
+      { name: "twitter:description", content: "Internal admin tool for affiliate sale payouts: advance payouts, reconciliation, withdrawals, append-only ledger." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c5a55061-ae5b-4c42-a5d8-b8f76dabca51/id-preview-23f2f439--f43a6d33-6c48-4e68-8d55-5f6c4ca045c7.lovable.app-1784447142692.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c5a55061-ae5b-4c42-a5d8-b8f76dabca51/id-preview-23f2f439--f43a6d33-6c48-4e68-8d55-5f6c4ca045c7.lovable.app-1784447142692.png" },
     ],
     links: [
       {
