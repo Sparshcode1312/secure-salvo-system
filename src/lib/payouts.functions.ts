@@ -105,7 +105,13 @@ export const runAdvanceJob = createServerFn({ method: "POST" }).handler(async ()
 });
 
 // Standard result envelope for validation errors so the UI can render backend messages.
-type ApiError = { ok: false; status: number; error: string; meta?: Record<string, unknown> };
+type ApiError = {
+  ok: false;
+  status: number;
+  error: string;
+  remainingSeconds?: number;
+  balance?: number;
+};
 type ApiOk<T> = { ok: true; data: T };
 type ApiResult<T> = ApiOk<T> | ApiError;
 
@@ -113,12 +119,7 @@ function pgError(message: string): ApiError | null {
   // Postgres RAISE messages surface here; parse the well-known ones.
   if (message.includes("cooldown_active:")) {
     const secs = Number(message.split("cooldown_active:")[1]?.split(/\s/)[0] ?? 0);
-    return {
-      ok: false,
-      status: 429,
-      error: "24-hour cooldown active",
-      meta: { remainingSeconds: secs },
-    };
+    return { ok: false, status: 429, error: "24-hour cooldown active", remainingSeconds: secs };
   }
   if (message.includes("insufficient_balance:")) {
     const bal = Number(message.split("insufficient_balance:")[1]?.split(/\s/)[0] ?? 0);
@@ -126,7 +127,7 @@ function pgError(message: string): ApiError | null {
       ok: false,
       status: 400,
       error: `Insufficient balance. Withdrawable: ₹${bal}`,
-      meta: { balance: bal },
+      balance: bal,
     };
   }
   if (message.includes("already_reconciled")) return { ok: false, status: 409, error: "Sale is already reconciled" };
