@@ -11,7 +11,19 @@ import {
   requestWithdrawal,
   failWithdrawal,
   createSale,
+  resetDemoData,
 } from "@/lib/payouts.functions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) =>
